@@ -902,7 +902,8 @@ static void gimbal_set_control(gimbal_control_t *set_control)
 		else if(set_control->gimbal_yaw_motor.gimbal_motor_mode == GIMBAL_MOTOR_MINIPC_AUTOAIM_LOCK)
 		{
 				//miniPC 绝对角度 锁定gimbal_miniPC_autoaim_lock_absolute_angle_control
-				gimbal_miniPC_autoaim_lock_absolute_angle_limit(&set_control->gimbal_yaw_motor, 1);
+				//gimbal_miniPC_autoaim_lock_absolute_angle_limit(&set_control->gimbal_yaw_motor, 1);
+			  gimbal_miniPC_autoaim_lock_absolute_angle_limit(&set_control->gimbal_yaw_motor, 0);
 		}
 
     //pitch电机模式控制

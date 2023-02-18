@@ -235,7 +235,7 @@ void CAN_cmd_chassis_reset_ID(void)
     chassis_can_send_data[6] = 0;
     chassis_can_send_data[7] = 0;
 
-    HAL_CAN_AddTxMessage(&CHASSIS_CAN, &chassis_tx_message, chassis_can_send_data, &send_mail_box);
+    HAL_CAN_AddTxMessage(&GIMBAL_CAN, &chassis_tx_message, chassis_can_send_data, &send_mail_box);
 }
 
 
@@ -271,7 +271,7 @@ void CAN_cmd_chassis(int16_t motor1, int16_t motor2, int16_t motor3, int16_t mot
     chassis_can_send_data[6] = motor4 >> 8;
     chassis_can_send_data[7] = motor4;
 
-    HAL_CAN_AddTxMessage(&CHASSIS_CAN, &chassis_tx_message, chassis_can_send_data, &send_mail_box);
+    HAL_CAN_AddTxMessage(&GIMBAL_CAN, &chassis_tx_message, chassis_can_send_data, &send_mail_box);
 }
 /**
   * @brief          send control current of motor (0x208, 0x209)
@@ -304,7 +304,7 @@ void CAN_cmd_friction_wheel(int16_t motor1, int16_t motor2){
     gimbal_can_send_data[5] = 0; //m3;//m3
     gimbal_can_send_data[6] = 0; //(m4>>8);//(m4>>8)
     gimbal_can_send_data[7] = 0; //m4;//m4
-    HAL_CAN_AddTxMessage(&GIMBAL_CAN, &gimbal_tx_message, gimbal_can_send_data, &send_mail_box);
+    HAL_CAN_AddTxMessage(&CHASSIS_CAN, &gimbal_tx_message, gimbal_can_send_data, &send_mail_box);
 }
 /**
   * @brief          return the yaw 6020 motor data point
@@ -407,38 +407,7 @@ void userCallback_CAN1_FIFO0_IT(CAN_HandleTypeDef *hcan)
 			i_can1 = rx_header.StdId - CAN_3508_M1_ID;//get motor id and index in array
 			switch (rx_header.StdId)
 			{
-					case CAN_3508_M1_ID:
-					{
-							//get motor id and index in array
-							//i_can1 = rx_header.StdId - CAN_3508_M1_ID;
-							get_motor_measure_new(&motor_chassis[i_can1], rx_data);
-							detect_hook(CHASSIS_MOTOR1_TOE);
-							break;
-					}
-					case CAN_3508_M2_ID:
-					{
-							//get motor id and index in array
-							//i_can1 = rx_header.StdId - CAN_3508_M1_ID;
-							get_motor_measure_new(&motor_chassis[i_can1], rx_data);
-							detect_hook(CHASSIS_MOTOR2_TOE);
-							break;
-					}
-					case CAN_3508_M3_ID:
-					{
-							//get motor id and index in array
-							//i_can1 = rx_header.StdId - CAN_3508_M1_ID;
-							get_motor_measure_new(&motor_chassis[i_can1], rx_data);
-							detect_hook(CHASSIS_MOTOR3_TOE);
-							break;
-					}
-					case CAN_3508_M4_ID:
-					{
-							//get motor id and index in array
-							//i_can1 = rx_header.StdId - CAN_3508_M1_ID;
-							get_motor_measure_new(&motor_chassis[i_can1], rx_data);
-							detect_hook(CHASSIS_MOTOR4_TOE);
-							break;
-					}
+					
 					case CAN_YAW_MOTOR_ID:
 					{
 							get_motor_measure_new(&motor_chassis[i_can1], rx_data);
@@ -554,19 +523,39 @@ void userCallback_CAN2_FIFO1_IT(CAN_HandleTypeDef *hcan)
 			HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &rx_header, rx_data);
 			
 			static uint8_t i_can2 = 0;
-			i_can2 = rx_header.StdId - CAN_SHOOTL_ID;
+			i_can2 = rx_header.StdId - CAN_3508_M1_ID;
 			switch (rx_header.StdId)
 			{
-					case CAN_SHOOTL_ID:
+					case CAN_3508_M1_ID:
 					{
-							get_motor_measure_new(&motor_CAN2Bus[i_can2], rx_data);
-						  detect_hook(SHOOT_FRIC_L_TOE);
+							//get motor id and index in array
+							//i_can1 = rx_header.StdId - CAN_3508_M1_ID;
+							get_motor_measure_new(&motor_chassis[i_can2], rx_data);
+							detect_hook(CHASSIS_MOTOR1_TOE);
 							break;
 					}
-					case CAN_SHOOTR_ID:
+					case CAN_3508_M2_ID:
 					{
-							get_motor_measure_new(&motor_CAN2Bus[i_can2], rx_data);
-						  detect_hook(SHOOT_FRIC_R_TOE);
+							//get motor id and index in array
+							//i_can1 = rx_header.StdId - CAN_3508_M1_ID;
+							get_motor_measure_new(&motor_chassis[i_can2], rx_data);
+							detect_hook(CHASSIS_MOTOR2_TOE);
+							break;
+					}
+					case CAN_3508_M3_ID:
+					{
+							//get motor id and index in array
+							//i_can1 = rx_header.StdId - CAN_3508_M1_ID;
+							get_motor_measure_new(&motor_chassis[i_can2], rx_data);
+							detect_hook(CHASSIS_MOTOR3_TOE);
+							break;
+					}
+					case CAN_3508_M4_ID:
+					{
+							//get motor id and index in array
+							//i_can1 = rx_header.StdId - CAN_3508_M1_ID;
+							get_motor_measure_new(&motor_chassis[i_can2], rx_data);
+							detect_hook(CHASSIS_MOTOR4_TOE);
 							break;
 					}
 					case CAN_PIT_MOTOR_ID:
@@ -579,6 +568,18 @@ void userCallback_CAN2_FIFO1_IT(CAN_HandleTypeDef *hcan)
 					{
 							break;
 					}
+//					case CAN_SHOOTL_ID:
+//					{
+//							get_motor_measure_new(&motor_CAN2Bus[i_can2], rx_data);
+//						  detect_hook(SHOOT_FRIC_L_TOE);
+//							break;
+//					}
+//					case CAN_SHOOTR_ID:
+//					{
+//							get_motor_measure_new(&motor_CAN2Bus[i_can2], rx_data);
+//						  detect_hook(SHOOT_FRIC_R_TOE);
+//							break;
+//					}
 			}
 		}	
 	
