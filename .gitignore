@@ -10,6 +10,9 @@
 JLinkLog.txt
 JLinkSettings.ini
 
+#CMSIS-DAP
+*CMSIS-DAP_DebugLog*
+
 #Keil project IDE files uVision files
 *.crf
 *.axf
